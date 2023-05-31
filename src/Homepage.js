@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue, push } from 'firebase/database';
 import firebase from "./firebase";
 import Header from './Header';
+import { Link } from 'react-router-dom';
 
 function Homepage () {
 
@@ -39,7 +40,7 @@ function Homepage () {
         onValue(dbRef, (res) => {
             const recipeArray = [];
             const data = res.val();
-            for (const property in res.val()) {
+            for (const property in data) {
                 data[property]['recipeKey'] = property;
                 recipeArray.push(
                     {
@@ -49,14 +50,12 @@ function Homepage () {
                     }
                 );
             }
-            console.log(recipeArray)
             setRecipes(recipeArray);
         })
     }, []);
 
     return (
         <>
-            <Header />
             <div className = 'recipeForm'>
                 <form onSubmit={handleNewRecipeSubmit}>
                     <label htmlFor="newRecipeName">Name</label>
@@ -70,10 +69,12 @@ function Homepage () {
                 <ul>
                     { recipes.map( (recipe) => {
                         return(
-                            <li key={recipe.key}>
-                                <h2>{recipe.recipeName}</h2>
-                                <img src={recipe.image} alt={recipe.recipeName} />
-                            </li>
+                            <Link to={`/${recipe.key}`} key={recipe.key}>
+                                <li>
+                                    <h2>{recipe.recipeName}</h2>
+                                    <img src={recipe.image} alt={recipe.recipeName} />
+                                </li>
+                            </Link>
                         )
                     })}
                 </ul>
